@@ -1,9 +1,12 @@
 using HRFlow.Data;
+using HRFlow.Services;
+using HRFlow.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
 
 namespace HRFlow.App
 {
@@ -16,7 +19,14 @@ namespace HRFlow.App
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddDbContext<HRFlowDbContext>(b => b.UseNpgsql(builder.Configuration.GetConnectionString("HRFlowDb")));
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
+            builder.Services.AddDbContext<HRFlowDbContext>(b =>
+            {
+                b.UseNpgsql(builder.Configuration.GetConnectionString("HRFlowDb"));
+            });
+
+            builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
             var app = builder.Build();
 

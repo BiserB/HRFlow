@@ -1,18 +1,39 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace HRFlow.Entities
+﻿namespace HRFlow.Entities
 {
     public class Employee
     {
         public int Id { get; set; }
 
-        [Required]
         public string FirstName { get; set; }
 
-        [Required]
         public string MiddleName { get; set; }
 
-        [Required]
         public string LastName { get; set; }
+
+        public int? LineManagerId { get; set; }
+
+        public Employee LineManager { get; set; }
+
+        public string IBAN { get; set; }
+
+        public Contact Contact { get; set; }
+
+        public DateTime HireDate { get; set; }
+
+        public DateTime? TerminationDate { get; set; }
+
+        public DateTime LastModified { get; set; }
+
+        public List<Employee> Subordinates { get; set; }
+
+        public List<DepartmentHistory> DepartmentHistories { get; set; }
+
+        public List<JobHistory> JobHistories { get; set; }
+
+        public List<SalaryHistory> SalaryHistories { get; set; }
+        
+        public List<Comment> CommentsReceived { get; set; }
+
+        public List<Comment> CommentsLeft { get; set; }
     }
 }

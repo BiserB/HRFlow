@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HRFlow.Data\HRFlow.Data.csproj" />
+    <ProjectReference Include="..\HRFlow.Services\HRFlow.Services.csproj" />
   </ItemGroup>
 
 </Project>
