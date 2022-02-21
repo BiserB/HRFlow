@@ -1,3 +1,5 @@
+using HRFlow.App.Infrastructure;
+using HRFlow.Common.MappingProfiles;
 using HRFlow.Data;
 using HRFlow.Services;
 using HRFlow.Services.Interfaces;
@@ -10,7 +12,7 @@ using System;
 
 namespace HRFlow.App
 {
-    internal class Program
+    public class Program
     {
         static void Main(string[] args)
         {
@@ -28,6 +30,8 @@ namespace HRFlow.App
 
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
+            //builder.Services.AddAutoMapper(options => options.AddProfile<EmployeeMappingProfile>());
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -35,6 +39,9 @@ namespace HRFlow.App
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
+            app.Seed();
+
             app.UseStaticFiles();
 
             app.UseRouting();

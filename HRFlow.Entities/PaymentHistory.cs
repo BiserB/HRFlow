@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HRFlow.Entities
 {
-    public class SalaryHistory
+    public class PaymentHistory
     {
         public int Id { get; set; }
 

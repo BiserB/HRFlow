@@ -30,7 +30,7 @@
 
         public List<JobHistory> JobHistories { get; set; }
 
-        public List<SalaryHistory> SalaryHistories { get; set; }
+        public List<PaymentHistory> SalaryHistories { get; set; }
         
         public List<Comment> CommentsReceived { get; set; }
 

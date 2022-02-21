@@ -19,14 +19,21 @@ namespace HRFlow.App.Controllers
 
         public IActionResult Index()
         {
+            //var emplyeeModels = employeeService.GetAllEmployees();
+
             return View();
         }
 
         public IActionResult Privacy()
         {
-            this.employeeService.AddEmployee();
-
             return View();
+        }
+
+        public IActionResult GetEmployees()
+        {
+            var emplyeeModels = employeeService.GetAllEmployees();
+
+            return new JsonResult(emplyeeModels);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

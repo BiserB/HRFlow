@@ -1,8 +1,60 @@
-﻿@{
+﻿@*@using HRFlow.Common.ViewModels
+@model List<EmployeeViewModel>*@
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="h5">List of all employees</h1>
 </div>
+
+<div>
+
+</div>
+
+<div id="example-table"></div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+
+    
+
+    $.ajax({
+        url: "http://localhost:5185/Home/GetEmployees",
+        cache: false,
+        method: "GET",
+        success: function (res){
+            console.log("res..", res);
+
+            var tabledata = res;
+
+            var table = new Tabulator("#example-table", {
+             	height:205, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+             	data:tabledata, //assign data to table
+             	layout:"fitColumns", //fit columns to width of table (optional)
+             	columns:[ //Define Table Columns
+            	 	{title:"First name", field:"firstName", width:150},
+            	 	{title:"Middle name", field:"middleName", width:150},
+            	 	{title:"Last name", field:"lastName", width:150},
+            	 	{title:"Line Manager", field:"lineManagerName", width:150},
+            	 	{title:"Hire date", field:"hireDate", sorter:"date", hozAlign:"center"},
+            	 	{title:"Long-term employee", field:"longTermEmployee", hozAlign:"left", formatter:"progress", formatterParams:{
+                        min:0,
+                        max:7120,
+                        color:["green", "orange", "red"],
+                        legendColor:"#000000",
+                        legendAlign:"center",
+                      }
+                   },
+             	],
+            });
+            
+            //trigger an alert message when the row is clicked
+            table.on("rowClick", function(e, row){ 
+            	alert("Row " + row.getData().id + " Clicked!!!!");
+            });
+        }
+    });
+
+
+</script>

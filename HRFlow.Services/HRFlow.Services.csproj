@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HRFlow.Common\HRFlow.Common.csproj" />
     <ProjectReference Include="..\HRFlow.Data\HRFlow.Data.csproj" />
     <ProjectReference Include="..\HRFlow.Entities\HRFlow.Entities.csproj" />
   </ItemGroup>

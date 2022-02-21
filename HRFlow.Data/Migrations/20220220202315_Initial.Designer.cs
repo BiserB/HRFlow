@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HRFlow.Data.Migrations
 {
     [DbContext(typeof(HRFlowDbContext))]
-    [Migration("20220220130232_Initial")]
+    [Migration("20220220202315_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -311,24 +311,7 @@ namespace HRFlow.Data.Migrations
                     b.ToTable("Municipality");
                 });
 
-            modelBuilder.Entity("HRFlow.Entities.Region", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Regions");
-                });
-
-            modelBuilder.Entity("HRFlow.Entities.SalaryHistory", b =>
+            modelBuilder.Entity("HRFlow.Entities.PaymentHistory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -354,6 +337,23 @@ namespace HRFlow.Data.Migrations
                     b.HasIndex("EmployeeId");
 
                     b.ToTable("SalaryHistories");
+                });
+
+            modelBuilder.Entity("HRFlow.Entities.Region", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Regions");
                 });
 
             modelBuilder.Entity("HRFlow.Entities.Comment", b =>
@@ -460,7 +460,7 @@ namespace HRFlow.Data.Migrations
                     b.Navigation("Country");
                 });
 
-            modelBuilder.Entity("HRFlow.Entities.SalaryHistory", b =>
+            modelBuilder.Entity("HRFlow.Entities.PaymentHistory", b =>
                 {
                     b.HasOne("HRFlow.Entities.Employee", "Employee")
                         .WithMany("SalaryHistories")

@@ -20,7 +20,7 @@ namespace HRFlow.Data
          
         public DbSet<JobHistory> JobHistories { get; set; }
          
-        public DbSet<SalaryHistory> SalaryHistories { get; set; }
+        public DbSet<PaymentHistory> SalaryHistories { get; set; }
 
         public DbSet<Comment> Comments { get; set; }
          
@@ -31,8 +31,6 @@ namespace HRFlow.Data
         public DbSet<Country> Countries { get; set; }
          
         public DbSet<Region> Regions { get; set; }
-
-
 
         protected override void OnModelCreating(ModelBuilder mb)
         {
@@ -113,9 +111,9 @@ namespace HRFlow.Data
                                    .IsRequired()
                                    .OnDelete(DeleteBehavior.Restrict);
 
-            mb.Entity<SalaryHistory>().HasKey(sh => sh.Id);
-            mb.Entity<SalaryHistory>().Property(sh => sh.IBAN).HasColumnType("varchar(32)").IsRequired();
-            mb.Entity<SalaryHistory>().Property(sh => sh.Amount).HasColumnType("decimal(19,4)").IsRequired();
+            mb.Entity<PaymentHistory>().HasKey(sh => sh.Id);
+            mb.Entity<PaymentHistory>().Property(sh => sh.IBAN).HasColumnType("varchar(32)").IsRequired();
+            mb.Entity<PaymentHistory>().Property(sh => sh.Amount).HasColumnType("decimal(19,4)").IsRequired();
 
             mb.Entity<Comment>().HasKey(c => c.Id);
             mb.Entity<Comment>().Property(c => c.Content).HasColumnType("varchar(250)").IsRequired();
