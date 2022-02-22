@@ -1,4 +1,5 @@
-﻿using HRFlow.Common.ViewModels;
+﻿using HRFlow.Common.BindingModels;
+using HRFlow.Common.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,14 @@ namespace HRFlow.Services.Interfaces
 {
     public interface IEmployeeService
     {
-        public bool AddEmployee();
+        bool AddEmployee();
 
-        public IList<EmployeeViewModel> GetAllEmployees();
+        IList<EmployeeViewModel> GetAllEmployees(bool onlyActiveEmployees);
+
+        EmployeeDetailsViewModel GetEmployee(int id);
+
+        bool UpdateEmployee(UpdateEmployeeModel model);
+
+        bool AddComment(AddCommentModel model);
     }
 }

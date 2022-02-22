@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HRFlow.Data.Migrations
 {
     [DbContext(typeof(HRFlowDbContext))]
-    [Migration("20220220202315_Initial")]
+    [Migration("20220222131552_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -168,7 +168,7 @@ namespace HRFlow.Data.Migrations
                     b.Property<int>("EmployeeId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("EndDate")
+                    b.Property<DateTime?>("EndDate")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime>("LastModified")

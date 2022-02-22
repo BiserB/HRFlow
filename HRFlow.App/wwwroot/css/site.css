@@ -16,3 +16,8 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.formbuilder-text-label {
+    font-size: 0.8em;
+    color: #6c757d;
+}

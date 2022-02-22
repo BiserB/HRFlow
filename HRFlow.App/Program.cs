@@ -1,5 +1,4 @@
 using HRFlow.App.Infrastructure;
-using HRFlow.Common.MappingProfiles;
 using HRFlow.Data;
 using HRFlow.Services;
 using HRFlow.Services.Interfaces;
@@ -29,8 +28,6 @@ namespace HRFlow.App
             });
 
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
-
-            //builder.Services.AddAutoMapper(options => options.AddProfile<EmployeeMappingProfile>());
 
             var app = builder.Build();
 

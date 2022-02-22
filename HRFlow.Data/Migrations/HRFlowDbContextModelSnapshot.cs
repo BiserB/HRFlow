@@ -166,7 +166,7 @@ namespace HRFlow.Data.Migrations
                     b.Property<int>("EmployeeId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("EndDate")
+                    b.Property<DateTime?>("EndDate")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime>("LastModified")

@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HRFlow.Common\HRFlow.Common.csproj" />
     <ProjectReference Include="..\HRFlow.Entities\HRFlow.Entities.csproj" />
   </ItemGroup>
 

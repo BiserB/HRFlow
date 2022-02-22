@@ -114,7 +114,7 @@ namespace HRFlow.Data.Migrations
                     EmployeeId = table.Column<int>(type: "integer", nullable: false),
                     DepartmentId = table.Column<int>(type: "integer", nullable: false),
                     StartDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     LastModified = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>

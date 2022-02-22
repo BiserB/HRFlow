@@ -1,4 +1,6 @@
 ﻿using HRFlow.App.Models;
+using HRFlow.Common.BindingModels;
+using HRFlow.Common.ViewModels;
 using HRFlow.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -19,8 +21,6 @@ namespace HRFlow.App.Controllers
 
         public IActionResult Index()
         {
-            //var emplyeeModels = employeeService.GetAllEmployees();
-
             return View();
         }
 
@@ -29,12 +29,58 @@ namespace HRFlow.App.Controllers
             return View();
         }
 
-        public IActionResult GetEmployees()
+        public IActionResult EmployeeDetails(int id)
         {
-            var emplyeeModels = employeeService.GetAllEmployees();
+            var employeeModel = employeeService.GetEmployee(id);
 
-            return new JsonResult(emplyeeModels);
+            if (employeeModel == null)
+            {
+                return RedirectToAction(nameof(Error));
+            }
+
+            return View(employeeModel);
         }
+
+        public IActionResult GetEmployees(bool onlyActiveEmployees = true)
+        {
+            var employeeModels = employeeService.GetAllEmployees(onlyActiveEmployees);
+
+            return new JsonResult(employeeModels);
+        }
+
+        public IActionResult GetEmployee(int id)
+        {
+            var employeeModel = employeeService.GetEmployee(id);
+
+            return new JsonResult(employeeModel);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateEmployee(UpdateEmployeeModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(EmployeeDetails), new { id = model.Id } );
+            }
+
+            var isUpdated = employeeService.UpdateEmployee(model);
+
+            return RedirectToAction(nameof(EmployeeDetails), new { id = model.Id });
+        }
+
+        [HttpPost]
+        public IActionResult AddComment(AddCommentModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(EmployeeDetails), new { id = model.EmployeeId });
+            }
+
+            var isAdded = employeeService.AddComment(model);
+
+            return RedirectToAction(nameof(EmployeeDetails), new { id = model.EmployeeId });
+        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
