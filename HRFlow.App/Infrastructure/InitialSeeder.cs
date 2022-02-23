@@ -4,6 +4,7 @@ using HRFlow.Entities.Enums;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -20,155 +21,206 @@ namespace HRFlow.App.Infrastructure
 
             dbContext.Database.EnsureCreated();
 
-            AddEntities(dbContext);
-        }
-
-        private static void AddEntities(HRFlowDbContext dbContext)
-        {
-            var hasEmployees = dbContext.Employees.Any();
-
-            if (hasEmployees)
+            if (dbContext.Employees.Any())
             {
                 return;
             }
 
-            var employee = new Employee()
+            AddRegions(dbContext);
+            AddCountries(dbContext);
+            AddEmployees(dbContext);
+            AddContacts(dbContext);
+            AddDepartments(dbContext);
+            AddJobs(dbContext);
+            AddJobHistories(dbContext);
+            AddDepartmentHistories(dbContext);
+        }
+
+       
+
+        private static void AddRegions(HRFlowDbContext dbContext)
+        {
+            var regionNames = GetSeedData("Regions");
+
+            foreach (var regionName in regionNames)
             {
-                FirstName = "Boss",
-                MiddleName = "O",
-                LastName = "Boss",
-                IBAN = "213123123",
-                HireDate = DateTime.Now.AddYears(-3),
-                LastModified = DateTime.Now,
-            };
-
-            var contact = new Contact()
-            {
-                Employee = employee,
-                Address = "Sofia, 7484 Roundtree Drive",
-                CompanyEmail = "boss@enterprise.com",
-                PersonalEmail = "persona@mail.bg",
-                PhoneNumber = "05553439394",
-                Gender = Gender.Male,
-                BirthDate = DateTime.Now.AddYears(-45),
-            };
-
-            var employee1 = new Employee()
-            {
-                FirstName = "Terri",
-                MiddleName = "Lee",
-                LastName = "Goldberg",
-                IBAN = "880391798097811",
-                HireDate = DateTime.Now.AddYears(-2),
-                LastModified = DateTime.Now,
-                LineManager = employee
-            }; 
-
-            var contact1 = new Contact()
-            {
-                Employee = employee1,
-                Address = "Boston, 6387 Scenic Avenue",
-                CompanyEmail = "terri0@adventure-works.com",
-                PersonalEmail = "persona@mail.bg",
-                PhoneNumber = "03533439394",
-                Gender = Gender.Male,
-                BirthDate = DateTime.Now.AddYears(-35),
-            };
-
-            dbContext.Employees.Add(employee);
-            dbContext.Contacts.Add(contact);
-
-            dbContext.Employees.Add(employee1);
-            dbContext.Contacts.Add(contact1);
-
-            dbContext.SaveChanges();
-
-            var job = new Job()
-            {
-                Title = "Chief Executive Officer",
-                Description = "Chief Executive Officer"
-            };
-
-            var jobHistory = new JobHistory()
-            {
-                Employee = employee,
-                Job = job,
-                Salary = 12000,
-                StartDate = employee.HireDate
-            };
-
-            var job1 = new Job()
-            {
-                Title = "Tool Designer",
-                Description = "Designing tools"
-            };
-
-            var jobHistory1 = new JobHistory()
-            {
-                Employee = employee1,
-                Job = job1,
-                Salary = 4000,
-                StartDate = employee1.HireDate,
-                EndDate = employee1.HireDate.AddYears(1)
-            };
-
-            var jobHistory2 = new JobHistory()
-            {
-                Employee = employee1,
-                Job = job1,
-                Salary = 6000,
-                StartDate = employee1.HireDate.AddYears(1)
-            };
-
-            dbContext.Jobs.Add(job);
-            dbContext.JobHistories.Add(jobHistory);
-
-            dbContext.Jobs.Add(job1);
-            dbContext.JobHistories.Add(jobHistory1);
-            dbContext.JobHistories.Add(jobHistory2);
-
-            dbContext.SaveChanges();
-
-            var now = DateTime.Now;
-            var employeePaymentMonts = (now.Year * 12 + now.Month) - (employee.HireDate.Year * 12 + employee.HireDate.Month);
-
-            for (int i = 1; i <= employeePaymentMonts; i++)
-            {
-                dbContext.SalaryHistories.Add(new PaymentHistory()
+                dbContext.Regions.Add(new Region()
                 {
-                    Employee = employee,
-                    IBAN = employee.IBAN,
-                    Amount = 12000,
-                    PaymentDate = employee.HireDate.AddMonths(i),
+                    Name = regionName
                 });
             }
 
             dbContext.SaveChanges();
+        }
 
-            var employee1PaymentMonts = (now.Year * 12 + now.Month) - (employee1.HireDate.Year * 12 + employee1.HireDate.Month);
+        private static void AddCountries(HRFlowDbContext dbContext)
+        {
+            var countries = GetSeedData("world-regions-according-to-the-world-bank");
 
-            Func<DateTime, DateTime, DateTime?, bool> paymentDateIsValid = (paymentDate, startDate, endDate) =>
+            var regions = dbContext.Regions.ToList();
+
+            foreach (var country in countries.Skip(1))
             {
-                if (endDate == null)
+                var c = country.Split(',');
+
+                dbContext.Countries.Add(new Country()
                 {
-                    return paymentDate >= startDate;
+                    Name = c[0],
+                    ISOCode = c[1],
+                    RegionId = regions.First(r => r.Name.Equals(c[3], StringComparison.OrdinalIgnoreCase)).Id
+                });
+            }
+
+            dbContext.SaveChanges();
+        }
+
+        public static void AddDepartments(HRFlowDbContext dbContext)
+        {
+            var departmentNames = GetSeedData("Departments");
+
+            foreach (var name in departmentNames)
+            {
+                dbContext.Departments.Add(new Department()
+                {
+                    Name = name,
+                });
+            }
+
+            dbContext.SaveChanges();
+        }
+
+        public static void AddEmployees(HRFlowDbContext dbContext)
+        {
+            var employees = GetSeedData("Employees");
+
+            foreach (var employee in employees.Skip(1))
+            {
+                var e = employee.Split(',');
+
+                dbContext.Employees.Add(new Employee()
+                {
+                    FirstName = e[0],
+                    MiddleName = e[1],
+                    LastName = e[2],
+                    IBAN = e[3],
+                    HireDate = DateTime.Parse(e[4]),
+                    LastModified = DateTime.Parse(e[5]),
+                    LineManagerId = String.IsNullOrWhiteSpace(e[6]) ? null : int.Parse(e[6]),
+                });
+            }
+
+            dbContext.SaveChanges();
+        }
+
+        private static void AddContacts(HRFlowDbContext dbContext)
+        {
+            var addresses = GetSeedData("Addresses");
+
+            var employees = dbContext.Employees.ToList();
+
+            var random = new Random();
+
+            foreach (var employee in employees)
+            {
+                dbContext.Contacts.Add(new Contact()
+                {
+                    Address = addresses[random.Next(addresses.Length)],
+                    Employee = employee,
+                    PersonalEmail = employee.FirstName.ToLower() + "private.com",
+                    CompanyEmail = employee.FirstName.ToLower() + "enterprise.com",
+                    PhoneNumber = random.Next(50000000, 90000000).ToString(),
+                    Gender = Gender.Male,
+                });
+            }
+
+            dbContext.SaveChanges();
+        }
+
+        public static void AddJobs(HRFlowDbContext dbContext)
+        {
+            var jobs = GetSeedData("Jobs");
+
+            foreach (var job in jobs)
+            {
+                var j = job.Split(',');
+
+                dbContext.Jobs.Add(new Job()
+                {
+                    Title = j[0],
+                    Description = j[1],
+                });
+            }
+
+            dbContext.SaveChanges();
+        }
+
+        public static void AddJobHistories(HRFlowDbContext dbContext)
+        {
+            var jobs = dbContext.Jobs.ToList();
+
+            var employees = dbContext.Employees.ToList();
+
+            var random = new Random();
+
+            foreach (var employee in employees)
+            {
+                var salary = random.Next(20, 120) * 100;
+                var jobIndex = random.Next(jobs.Count);
+                var paymentIncreases = random.Next(1, 3);
+
+
+                var employeeJobHistories = new List<JobHistory>();
+
+                for (int i = 0; i < paymentIncreases; i++)
+                {
+                    var lastJob = employeeJobHistories.LastOrDefault();
+
+                    if (lastJob == null)
+                    {
+                        employeeJobHistories.Add(new JobHistory()
+                        {
+                            Employee = employee,
+                            Job = jobs[jobIndex],
+                            Salary = salary,
+                            StartDate = employee.HireDate,
+                            EndDate = paymentIncreases > 1 ? employee.HireDate.AddMonths(6) : null
+                        });
+                    }
+                    else
+                    {
+                        employeeJobHistories.Add(new JobHistory()
+                        {
+                            Employee = employee,
+                            Job = jobs[jobIndex],
+                            Salary = salary * 1.20M,
+                            StartDate = lastJob.EndDate!.Value,
+                        });
+                    }
                 }
 
-                return startDate <= paymentDate && paymentDate <= endDate;
-            };
+                dbContext.JobHistories.AddRange(employeeJobHistories);
+            }
 
-            for (int i = 1; i <= employee1PaymentMonts; i++)
+            dbContext.SaveChanges();
+        }
+
+        public static void AddDepartmentHistories(HRFlowDbContext dbContext)
+        {
+            var departments = dbContext.Departments.ToList();
+
+            var employees = dbContext.Employees.ToList();
+
+            var random = new Random();
+
+            foreach (var employee in employees)
             {
-                var paymentDate = employee1.HireDate.AddMonths(i);
+                var departmentIndex = random.Next(departments.Count);
 
-                var salary = employee1.JobHistories.FirstOrDefault(jh => paymentDateIsValid(paymentDate, jh.StartDate, jh.EndDate))?.Salary;
-
-                dbContext.SalaryHistories.Add(new PaymentHistory()
+                dbContext.DepartmentHistories.Add(new DepartmentHistory()
                 {
-                    Employee = employee1,
-                    IBAN = employee1.IBAN,
-                    Amount = salary ?? 0,
-                    PaymentDate = paymentDate,
+                    Employee = employee,
+                    Department = departments[departmentIndex],
+                    StartDate = employee.HireDate
                 });
             }
 
@@ -184,7 +236,7 @@ namespace HRFlow.App.Infrastructure
                 return;
             }
 
-            var entityNames = new string[]{ "Employee", "Contact", "Department", "DepartmentHistory", "Job", "JobHistory" };
+            var entityNames = new string[] { "Employee", "Contact", "Department", "DepartmentHistory", "Job", "JobHistory" };
 
             foreach (var entityName in entityNames)
             {
@@ -193,16 +245,16 @@ namespace HRFlow.App.Infrastructure
                 dbContext.AddRange(entitiesToAdd);
 
                 dbContext.SaveChanges();
-            }         
+            }
         }
 
-        private static object[] GetSeedData(string fileName)
+        private static string[] GetSeedData(string fileName)
         {
             var directoryPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
             var basePath = Path.GetFullPath(Path.Combine(directoryPath!, @"..\..\..\.."));
 
-            string fullPath = Path.Combine(basePath, @$"HRFlow.Seed\{fileName}.csv");
+            string fullPath = Path.Combine(basePath, @$"HRFlow.Seed\{fileName}.txt");
 
             string[] lines = File.ReadAllLines(fullPath);
 

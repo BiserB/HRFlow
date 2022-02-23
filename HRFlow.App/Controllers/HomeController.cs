@@ -33,12 +33,7 @@ namespace HRFlow.App.Controllers
         {
             var employeeModel = employeeService.GetEmployee(id);
 
-            if (employeeModel == null)
-            {
-                return RedirectToAction(nameof(Error));
-            }
-
-            return View(employeeModel);
+            return View(employeeModel ?? new EmployeeDetailsViewModel());
         }
 
         public IActionResult GetEmployees(bool onlyActiveEmployees = true)
@@ -79,6 +74,30 @@ namespace HRFlow.App.Controllers
             var isAdded = employeeService.AddComment(model);
 
             return RedirectToAction(nameof(EmployeeDetails), new { id = model.EmployeeId });
+        }
+
+        [HttpGet]
+        public IActionResult AddEmployee()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult AddEmployee(AddEmployeeModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var employeeId = employeeService.AddEmployee(model);
+
+            if (employeeId == 0)
+            {
+                return View(model);
+            }
+
+            return RedirectToAction(nameof(EmployeeDetails), new { id = employeeId });
         }
 
 

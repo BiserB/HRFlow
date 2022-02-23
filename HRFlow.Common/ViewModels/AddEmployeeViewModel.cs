@@ -8,10 +8,8 @@ using System.Threading.Tasks;
 
 namespace HRFlow.Common.ViewModels
 {
-    public class EmployeeDetailsViewModel
+    public class AddEmployeeViewModel
     {
-        public int Id { get; set; }
-
         [Required]
         [MinLength(Const.EmplNameMinLength)]
         [MaxLength(Const.EmplNameMaxLength)]
@@ -29,23 +27,17 @@ namespace HRFlow.Common.ViewModels
 
         public int? LineManagerId { get; set; }
 
-        public string LineManagerName { get; set; }
-
-        public string HireDate { get; set; }
-
         [Required]
         [MinLength(Const.IBANMinLength)]
         [MaxLength(Const.IBANMaxLength)]
         public string IBAN { get; set; }
 
-        public List<DepartmentHistoryViewModel> Departments { get; set; } = new List<DepartmentHistoryViewModel>();
+        public DateTime HireDate { get; set; }
 
-        public List<JobHistoryViewModel> Jobs { get; set; } = new List<JobHistoryViewModel>();
+        public int DepartmentId { get; set; }
 
-        public List<CommentViewModel> Comments { get; set; } = new List<CommentViewModel>();
+        public int JobId { get; set; }
 
-        public decimal[] PaymentHistory { get; set; } = new decimal[0];
-
-        public DateTime? TerminationDate { get; set; }
+        public decimal Salary { get; set; }
     }
 }

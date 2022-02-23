@@ -10,7 +10,7 @@ namespace HRFlow.Services.Interfaces
 {
     public interface IEmployeeService
     {
-        bool AddEmployee();
+        int AddEmployee(AddEmployeeModel model);
 
         IList<EmployeeViewModel> GetAllEmployees(bool onlyActiveEmployees);
 

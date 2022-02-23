@@ -1,0 +1,47 @@
+﻿Accountant,Keeps or examines the records of money received, paid, and owed by the company
+Accounts Manager,The business representative
+Accounts Payable Specialist,Responsible for day-to-day financial transactions including accounts payable
+Accounts Receivable Specialist,Responsible for collecting payments for a company
+Application Specialist,Responsible for maintaining the optimal performance of system applications
+Benefits Specialist,Assisting with the administration of all benefits and retirement programs
+Chief Executive Officer,Chief Executive Officer
+Chief Financial Officer,Chief Financial Officer
+Control Specialist,Control Specialist
+Database Administrator,Database Administrator
+Design Engineer,Design Engineer
+Document Control Assistant,Document Control Assistant
+Document Control Manager,Document Control Manager
+Engineering Manager,Engineering Manager
+European Sales Manager,European Sales Manager
+Facilities Administrative Assistant,Facilities Administrative Assistant
+Facilities Manager,Facilities Manager
+Finance Manager,Finance Manager
+Human Resources Administrative Assistant,Human Resources Administrative Assistant
+Human Resources Manager,Human Resources Manager
+Information Services Manager,Information Services Manager
+Janitor,Janitor
+Maintenance Supervisor,Maintenance Supervisor
+Marketing Assistant,Marketing Assistant
+Marketing Manager,Marketing Manager
+Marketing Specialist,Marketing Specialist
+Master Scheduler,Master Scheduler
+Network Administrator,Network Administrator
+Network Manager,Network Manager
+Pacific Sales Manager,Pacific Sales Manager
+Production Control Manager,Production Control Manager
+Purchasing Assistant,Purchasing Assistant
+Purchasing Manager,Purchasing Manager
+Quality Assurance Manager,Quality Assurance Manager
+Quality Assurance Supervisor,Quality Assurance Supervisor
+Quality Assurance Technician,Quality Assurance Technician
+Recruiter,Recruiter
+Research and Development Engineer,Research and Development Engineer
+Research and Development Manager,Research and Development Manager
+Sales Representative,Sales Representative
+Scheduling Assistant,Scheduling Assistant
+Senior Design Engineer,Senior Design Engineer
+Senior Tool Designer,Senior Tool Designer
+Shipping and Receiving Clerk,Shipping and Receiving Clerk
+Shipping and Receiving Supervisor,Shipping and Receiving Supervisor
+Stocker,Stocker
+Tool Designer,Tool Designer

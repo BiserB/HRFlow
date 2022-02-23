@@ -31,11 +31,6 @@ namespace HRFlow.Services
             return dbContext.SaveChanges() > 0;
         }
 
-        public bool AddEmployee()
-        {
-            return dbContext.SaveChanges() > 0;
-        }
-
         public IList<EmployeeViewModel> GetAllEmployees(bool onlyActiveEmployees)
         {
             var today = DateTime.Today;
@@ -92,7 +87,7 @@ namespace HRFlow.Services
                 .Include(dh => dh.Department)
                 .Where(dh => dh.EmployeeId == employee.Id)
                 .OrderByDescending(dh => dh.StartDate)
-                .Select (dh => new DepartmentHistoryViewModel()
+                .Select(dh => new DepartmentHistoryViewModel()
                 {
                     Id = dh.Id,
                     DepartmentId = dh.DepartmentId,
@@ -111,8 +106,9 @@ namespace HRFlow.Services
                     Id = jh.Id,
                     JobId = jh.JobId,
                     JobTitle = jh.Job.Title,
+                    Salary = jh.Salary,
                     StartDate = jh.StartDate,
-                    EndDate= jh.EndDate,
+                    EndDate = jh.EndDate,
                 })
                 .ToList();
 
@@ -131,6 +127,13 @@ namespace HRFlow.Services
                 })
                 .ToList();
 
+            var lineManagerName = String.Empty;
+
+            if (employee.LineManager != null )
+            {
+                lineManagerName = FormatName(employee.LineManager.FirstName, employee.LineManager.MiddleName, employee.LineManager.LastName);
+            }            
+
             var model = new EmployeeDetailsViewModel()
             {
                 Id = id,
@@ -140,7 +143,7 @@ namespace HRFlow.Services
                 HireDate = employee.HireDate.ToShortDateString(),
                 IBAN = employee.IBAN,
                 LineManagerId = employee.LineManagerId,
-                LineManagerName = FormatName(employee.LineManager.FirstName, employee.LineManager.MiddleName, employee.LineManager.LastName),
+                LineManagerName = lineManagerName,
                 Departments = departmentHistory,
                 Jobs = jobHistory,
                 Comments = comments,
@@ -172,6 +175,47 @@ namespace HRFlow.Services
             var middleNameLetter = middleName != null ? middleName.Substring(0, 1) : String.Empty;
 
             return $"{ firstName ?? "" } { middleNameLetter } { lastName ?? "" }";
+        }
+
+        public int AddEmployee(AddEmployeeModel model)
+        {
+            var now = DateTime.Now;
+
+            var employee = new Employee()
+            {
+                FirstName = model.FirstName,
+                MiddleName = model.MiddleName,
+                LastName = model.LastName,
+                IBAN = model.IBAN,
+                HireDate = model.HireDate,
+                LineManagerId = model.LineManagerId,
+                LastModified = now,
+            };
+
+            dbContext.Employees.Add(employee);
+            dbContext.SaveChanges();
+
+            var departmentHistory = new DepartmentHistory()
+            {
+                EmployeeId = employee.Id,
+                DepartmentId = model.DepartmentId,
+                StartDate = model.HireDate,
+                LastModified = now,
+            };
+
+            var jobHistory = new JobHistory()
+            {
+                EmployeeId = employee.Id,
+                JobId = model.JobId,
+                StartDate = model.HireDate,
+                Salary = model.Salary,
+            };
+
+            dbContext.DepartmentHistories.Add(departmentHistory);
+            dbContext.JobHistories.Add(jobHistory);
+            dbContext.SaveChanges();
+
+            return employee.Id;
         }
     }
 }
