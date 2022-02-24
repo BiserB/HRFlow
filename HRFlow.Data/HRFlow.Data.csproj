@@ -23,4 +23,8 @@
     <ProjectReference Include="..\HRFlow.Entities\HRFlow.Entities.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Diagrams\" />
+  </ItemGroup>
+
 </Project>

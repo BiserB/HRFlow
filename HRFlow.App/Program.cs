@@ -24,7 +24,9 @@ namespace HRFlow.App
 
             builder.Services.AddDbContext<HRFlowDbContext>(b =>
             {
+                // Select needed DB
                 b.UseNpgsql(builder.Configuration.GetConnectionString("HRFlowDb"));
+                //b.UseSqlServer(builder.Configuration.GetConnectionString("HRFlowDb_SQLServer"));
             });
 
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
