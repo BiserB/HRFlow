@@ -13,22 +13,22 @@
         <div asp-validation-summary="ModelOnly"></div>
         <div class="col-md-4">
             <div class="form-group mb-2">
-                <label for="first-name" class="formbuilder-text-label">First Name</label>
+                <label asp-for="FirstName" class="formbuilder-text-label">First Name</label>
                 <input asp-for="FirstName" class="form-control" />
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
             <div class="form-group mb-2">
-                <label for="first-name" class="formbuilder-text-label">Middle Name</label>
+                <label asp-for="MiddleName" class="formbuilder-text-label">Middle Name</label>
                 <input asp-for="MiddleName" class="form-control" />
                 <span asp-validation-for="MiddleName" class="text-danger"></span>
             </div>
             <div class="form-group mb-2">
-                <label for="first-name" class="formbuilder-text-label">Last Name</label>
+                <label asp-for="LastName" class="formbuilder-text-label">Last Name</label>
                 <input asp-for="LastName" class="form-control" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
             <div class="form-group mb-2">
-                <label for="first-name" class="formbuilder-text-label">IBAN</label>
+                <label asp-for="IBAN" class="formbuilder-text-label">IBAN</label>
                 <input asp-for="IBAN" class="form-control" />
                 <span asp-validation-for="IBAN" class="text-danger"></span>
             </div>
@@ -36,19 +36,24 @@
 
         <div class="col-md-4">
             <div class="form-group mb-2">
-                <label for="first-name" class="formbuilder-text-label">Department</label>
+                <label asp-for="DepartmentId" class="formbuilder-text-label">Department</label>
                 <input asp-for="DepartmentId" class="form-control" />
                 <span asp-validation-for="DepartmentId" class="text-danger"></span>
             </div>
             <div class="form-group mb-2">
-                <label for="first-name" class="formbuilder-text-label">Job</label>
+                <label asp-for="JobId" class="formbuilder-text-label">Job</label>
                 <input asp-for="JobId" class="form-control" />
                 <span asp-validation-for="JobId" class="text-danger"></span>
             </div>
             <div class="form-group mb-2">
-                <label for="first-name" class="formbuilder-text-label">Hire Date</label>
+                <label asp-for="HireDate" class="formbuilder-text-label">Hire Date</label>
                 <input asp-for="HireDate" class="form-control" />
                 <span asp-validation-for="HireDate" class="text-danger"></span>
+            </div>
+             <div class="form-group mb-2">
+                <label asp-for="LineManagerId" class="formbuilder-text-label">Line Manager</label>
+                <select asp-for="LineManagerId" asp-items="Model.LineManagers" class="form-control"></select>
+                <span asp-validation-for="LineManagers" class="text-danger"></span>
             </div>
             <div class="d-flex flex-row-reverse">
                 <button type="submit" class="btn btn-primary">Save</button>
@@ -56,10 +61,7 @@
         </div>
     </div>
 
-
 </form>
-
-
 
 
 <script>

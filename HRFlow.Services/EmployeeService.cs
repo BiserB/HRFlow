@@ -3,6 +3,7 @@ using HRFlow.Common.ViewModels;
 using HRFlow.Data;
 using HRFlow.Entities;
 using HRFlow.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace HRFlow.Services
@@ -188,6 +189,22 @@ namespace HRFlow.Services
             }
 
             return dbContext.SaveChanges() > 0;
+        }
+
+        public AddEmployeeViewModel GetEmployeeModel()
+        {
+            var managers = dbContext.Employees
+                .Where(e => e.LineManagerId == null)
+                .Select(e => new SelectListItem() { Value = e.Id.ToString(), Text = e.FirstName + " " + e.LastName})
+                .ToList();
+
+            var model = new AddEmployeeViewModel() { HireDate = DateTime.Now };
+
+            model.LineManagers.Add(new SelectListItem() { Value = "0", Text = " - - - " });
+
+            model.LineManagers.AddRange(managers);
+
+            return model;
         }
 
         public int AddEmployee(AddEmployeeModel model)

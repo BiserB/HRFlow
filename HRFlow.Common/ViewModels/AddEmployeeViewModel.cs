@@ -1,4 +1,5 @@
 ﻿using HRFlow.Common.AppConstants;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -39,5 +40,7 @@ namespace HRFlow.Common.ViewModels
         public int JobId { get; set; }
 
         public decimal Salary { get; set; }
+
+        public List<SelectListItem> LineManagers { get; set; } = new List<SelectListItem>();
     }
 }

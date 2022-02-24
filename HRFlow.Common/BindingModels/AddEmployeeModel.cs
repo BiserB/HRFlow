@@ -15,6 +15,6 @@ namespace HRFlow.Common.BindingModels
 
         public int JobId { get; set; }
 
-        public decimal Salary { get; set; }
+        public int? LineManagerId { get; set; }
     }
 }

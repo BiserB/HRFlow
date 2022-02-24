@@ -97,7 +97,9 @@ namespace HRFlow.App.Controllers
         [HttpGet]
         public IActionResult AddEmployee()
         {
-            return View();
+            var model = employeeService.GetEmployeeModel();
+
+            return View(model);
         }
 
         [HttpPost]
