@@ -8,3 +8,6 @@
 - **IDE** Microsoft Visual Studio 2022 Version 17.0.5
 - **DB Server** PostgreSQL 14
 - **DB tool** pgAdmin 4 Version 5.7
+***
+### Entity realtions
+![alt text](https://github.com/BiserB/HRFlow/blob/main/HRFlow.Data/Diagrams/HRFlow.png)
