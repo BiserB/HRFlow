@@ -19,5 +19,7 @@ namespace HRFlow.Services.Interfaces
         bool UpdateEmployee(UpdateEmployeeModel model);
 
         bool AddComment(AddCommentModel model);
+
+        bool UpdateComment(UpdateCommentModel model);
     }
 }

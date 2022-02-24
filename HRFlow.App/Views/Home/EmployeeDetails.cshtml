@@ -14,24 +14,37 @@
             <div asp-validation-summary="ModelOnly"></div>
 
             <div class="form-group mb-2">
-                <label for="first-name" class="formbuilder-text-label">First Name</label>
+                <label asp-for="FirstName" class="formbuilder-text-label">First Name</label>
                 <input asp-for="FirstName" class="form-control" />
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
             <div class="form-group mb-2">
-                <label for="first-name" class="formbuilder-text-label">Middle Name</label>
+                <label asp-for="MiddleName" class="formbuilder-text-label">Middle Name</label>
                 <input asp-for="MiddleName" class="form-control" />
                 <span asp-validation-for="MiddleName" class="text-danger"></span>
             </div>
             <div class="form-group mb-2">
-                <label for="first-name" class="formbuilder-text-label">Last Name</label>
+                <label asp-for="LastName" class="formbuilder-text-label">Last Name</label>
                 <input asp-for="LastName" class="form-control" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
             <div class="form-group mb-2">
-                <label for="first-name" class="formbuilder-text-label">IBAN</label>
+                <label asp-for="IBAN" class="formbuilder-text-label">IBAN</label>
                 <input asp-for="IBAN" class="form-control" />
                 <span asp-validation-for="IBAN" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-2">
+                <label asp-for="Salary" class="formbuilder-text-label">Current Salary</label>
+                <input asp-for="Salary" class="form-control" />
+                <span asp-validation-for="Salary" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-2">
+                <label for="line-mgr" class="formbuilder-text-label">Line Manager</label>
+                <div class="form-control text-muted" id="line-mgr">@(String.IsNullOrEmpty(Model?.LineManagerName) ? "- - -" : Model?.LineManagerName )</div>
+            </div>
+            <div class="form-group mb-2">
+                <label for="hire-date" class="formbuilder-text-label">Hire Date</label>
+                <div class="form-control text-muted" id="hire-date">@(Model.HireDate)</div>
             </div>
             <input value="@Model.Id" type="hidden" name="Id" />
             <div class="d-flex flex-row-reverse">
@@ -48,8 +61,8 @@
 
         <form asp-controller="Home" asp-action="AddComment" method="post">
             <div class="mb-3">
-                <label for="content" class="form-label">Add comment</label>
-                <textarea class="form-control" id="content" name="content" rows="3" maxlength="250"></textarea>
+                <label asp-for="Comment" class="form-label">Add comment</label>
+                <textarea asp-for="Comment" class="form-control" rows="3"></textarea>
             </div>
             <input value="@Model.Id" type="hidden" name="employeeId" />
             <div class="d-flex flex-row-reverse">
@@ -61,11 +74,18 @@
         <div id="comments-table">
             @foreach (var comment in Model.Comments)
             {
+                string contentId = "content-" + comment.Id;
+
                 <div class="card">
                     <div class="card-body">
 
                         <span class="h5">@comment.AuthorName  <span class="h6">- @comment.LastModified</span></span>
-                        <p>@comment.Content</p>
+                        <p id="@contentId">@comment.Content</p>
+                        <div class="d-grid justify-content-end">
+                            <button type="button" class="btn btn-sm" data-bs-toggle="modal" data-id="@comment.Id" data-bs-target="#commentModal">
+                                edit
+                            </button>
+                        </div>
                     </div>
                 </div>
             }
@@ -83,12 +103,12 @@
                     <h5 class="card-title" id="department">@department.DepartmentName</h5>
                     <div class="row">
                         <div class="col">
-                            <p class="text-muted">Start</p>
-                            <p class="start">@department.StartDate.ToShortDateString()</p>
+                            <div class="text-muted">Start</div>
+                            <span class="start">@department.StartDate.ToShortDateString()</span>
                         </div>
                         <div class=col>
-                            <p class="text-muted">End</p>
-                            <p class="end">@department.EndDate?.ToShortDateString()</p>
+                            <div class="text-muted">End</div>
+                            <span class="end">@department.EndDate?.ToShortDateString()</span>
                         </div>
                     </div>
                 </div>
@@ -103,15 +123,15 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title" id="department-1">@job.JobTitle</h5>
-                    <p>Salary: @job.Salary</p>
+                    <p>Salary: @job.Salary.ToString("N2")</p>
                     <div class="row">
                         <div class="col">
-                            <p class="text-muted">Start</p>
-                            <p class="start">@job.StartDate.ToShortDateString()</p>
+                            <div class="text-muted">Start</div>
+                            <div class="start">@job.StartDate.ToShortDateString()</div>
                         </div>
                         <div class=col>
-                            <p class="text-muted">End</p>
-                            <p class="end">@job.EndDate?.ToShortDateString()</p>
+                            <div class="text-muted">End</div>
+                            <div class="end">@job.EndDate?.ToShortDateString()</div>
                         </div>
                     </div>
                 </div>
@@ -121,20 +141,21 @@
 
 </div>
 
-
-<div style="display:none">
-    <div class="card" id="department-template">
-        <div class="card-body">
-            <h5 class="card-title" id="department-1">Card title</h5>
-            <div class="row">
-                <div class="col">
-                    <p class="text-muted">Start</p>
-                    <p class="start"></p>
-                </div>
-                <div class=col>
-                    <p class="text-muted">End</p>
-                    <p class="end"></p>
-                </div>
+<!-- Modal -->
+<div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                @*<h5 class="modal-title" id="commentModalLabel">Modal title</h5>*@
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <label for="edit-comment" class="form-label">Edit comment</label>
+                <textarea id="edit-comment" class="form-control" rows="3"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="modal-close" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="modal-save">Save changes</button>
             </div>
         </div>
     </div>
@@ -143,29 +164,65 @@
 
 <script>
 
-    const url = window.location.pathname;
-    const lastPathSegment = url.substring(url.lastIndexOf('/') + 1);
-    const employeeId = parseInt(lastPathSegment, 10);
+    $( document ).ready(function() {
+        const url = window.location.pathname;
+        const lastPathSegment = url.substring(url.lastIndexOf('/') + 1);
+        const employeeId = parseInt(lastPathSegment, 10);
 
-    const isNumber = typeof(employeeId) === 'number';
+        const isNumber = typeof(employeeId) === 'number';
 
-    if(isNumber){
-        loadData(employeeId);
-    }
+        if(isNumber){
+            // Data overview helper 
+            // loadData(employeeId);
+        }
 
-    function loadData(id){
-        $.ajax({
-            url: "http://localhost:5185/Home/GetEmployee/" + id,
-            cache: false,
-            method: "GET",
-            success: function (res){
-                console.log("res..", res);
-            }
+        function loadData(id){
+            $.ajax({
+                url: "http://localhost:5185/Home/GetEmployee/" + id,
+                cache: false,
+                method: "GET",
+                success: function (res){
+                    console.log("res..", res);
+                }
+            });
+        }
+
+        var commentModal = document.getElementById('commentModal');
+        var modalTitle = commentModal.querySelector('.modal-title');
+        var modalBody = commentModal.querySelector('#edit-comment');
+        var closeModalBtn = document.getElementById('modal-close');
+
+        var selectedCommentId = 0;
+        var selectedComment;
+
+        commentModal.addEventListener('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            selectedCommentId = button.data('id');
+            selectedComment = document.getElementById('content-' + selectedCommentId)
+            var content = selectedComment.textContent;
+            modalBody.value = content;
+        })
+
+        $('#modal-save').on('click', function (){
+            updateComment({ id: selectedCommentId, content: modalBody.value, employeeId});
         });
-    }
 
-    function populateDepartments(data){
-        let template = document.getElementById('department-template');
+        function updateComment(comment){
+                $.ajax({
+                    url: "http://localhost:5185/Home/UpdateComment",
+                    method: "POST",
+                    data: comment,
+                    success: function (res){
+                        if(res === 'ok'){
+                            selectedComment.textContent = comment.content;                            
+                            closeModalBtn.click();
+                            selectedCommentId = 0;
+                            selectedComment = null;
+                        }
+                    }
+                });
+            }
 
-    }
+    });
+
 </script>

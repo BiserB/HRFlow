@@ -38,6 +38,13 @@ namespace HRFlow.Common.ViewModels
         [MaxLength(Const.IBANMaxLength)]
         public string IBAN { get; set; }
 
+        public decimal Salary { get; set; }
+
+        [Required]
+        [MinLength(Const.CommentMinLength)]
+        [MaxLength(Const.CommentMaxLength)]
+        public string Comment { get; set; }
+
         public List<DepartmentHistoryViewModel> Departments { get; set; } = new List<DepartmentHistoryViewModel>();
 
         public List<JobHistoryViewModel> Jobs { get; set; } = new List<JobHistoryViewModel>();

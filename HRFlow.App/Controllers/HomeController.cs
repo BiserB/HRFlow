@@ -55,7 +55,7 @@ namespace HRFlow.App.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction(nameof(EmployeeDetails), new { id = model.Id } );
+                return RedirectToAction(nameof(EmployeeDetails), new { id = model.Id });
             }
 
             var isUpdated = employeeService.UpdateEmployee(model);
@@ -74,6 +74,24 @@ namespace HRFlow.App.Controllers
             var isAdded = employeeService.AddComment(model);
 
             return RedirectToAction(nameof(EmployeeDetails), new { id = model.EmployeeId });
+        }
+
+        [HttpPost]
+        public IActionResult UpdateComment(UpdateCommentModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return new JsonResult("invalid model");
+            }
+
+            var isUpdated = employeeService.UpdateComment(model);
+
+            if (isUpdated)
+            {
+                return new JsonResult("ok");
+            }
+
+            return new JsonResult("invalid model");
         }
 
         [HttpGet]

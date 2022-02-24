@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -8,7 +7,6 @@
 </div>
 
 <div>
-
 </div>
 
 <div id="employees-table"></div>
@@ -29,16 +27,16 @@
                 var tabledata = res;
 
                 table = new Tabulator("#employees-table", {
-                 	height:600, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
-                 	data:tabledata, //assign data to table
-                 	layout:"fitColumns", //fit columns to width of table (optional)
-                 	columns:[ //Define Table Columns
-                	 	{title:"First name", field:"firstName", width:150},
-                	 	{title:"Middle name", field:"middleName", width:150},
-                	 	{title:"Last name", field:"lastName", width:150},
-                	 	{title:"Line Manager", field:"lineManagerName", width:150},
-                	 	{title:"Hire date", field:"hireDate", sorter:"date", hozAlign:"center"},
-                	 	{title:"Long-term employee", field:"longTermEmployee", hozAlign:"left", formatter:"progress", formatterParams:{
+                    height:600,             // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+                    data:tabledata,         //assign data to table
+                    layout:"fitColumns",    //fit columns to width of table (optional)
+                    columns:[               //Define Table Columns
+                        {title:"First name", field:"firstName", width:150, headerFilter:"input"},
+                        {title:"Middle name", field:"middleName", width:150, headerFilter:"input"},
+                        {title:"Last name", field:"lastName", width:150, headerFilter:"input"},
+                        {title:"Line Manager", field:"lineManagerName", width:150, headerFilter:"input"},
+                        {title:"Hire date", field:"hireDate", sorter:"date", hozAlign:"center", headerFilter:"input"},
+                        {title:"Long-term employee", field:"longTermEmployee", hozAlign:"left", formatter:"progress", formatterParams:{
                             min:0,
                             max:7120,
                             color:["green"],
@@ -46,9 +44,9 @@
                             legendAlign:"center",
                           }
                        },
-                 	],
+                    ],
                 });
-                
+
                 //trigger an alert message when the row is clicked
                 table.on("rowClick", function(e, row){
                     const id = row.getData().id;

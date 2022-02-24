@@ -22,7 +22,7 @@ namespace HRFlow.Services
             {
                 EmployeeId = model.EmployeeId,
                 AuthorId = 1,
-                Content = model.Content,
+                Content = model.Comment,
                 LastModified = DateTime.Now,
             };
 
@@ -129,10 +129,12 @@ namespace HRFlow.Services
 
             var lineManagerName = String.Empty;
 
-            if (employee.LineManager != null )
+            if (employee.LineManager != null)
             {
                 lineManagerName = FormatName(employee.LineManager.FirstName, employee.LineManager.MiddleName, employee.LineManager.LastName);
-            }            
+            }
+
+            var lastJob = GetLastJob(employee);
 
             var model = new EmployeeDetailsViewModel()
             {
@@ -147,6 +149,7 @@ namespace HRFlow.Services
                 Departments = departmentHistory,
                 Jobs = jobHistory,
                 Comments = comments,
+                Salary = lastJob.Salary,
             };
 
             return model;
@@ -161,20 +164,30 @@ namespace HRFlow.Services
                 return false;
             }
 
+            var now = DateTime.Now;
+
             employee.FirstName = model.FirstName;
             employee.MiddleName = model.MiddleName;
             employee.LastName = model.LastName;
             employee.IBAN = model.IBAN;
-            employee.LastModified = DateTime.Now;
+            employee.LastModified = now;
+
+            var lastJob = GetLastJob(employee);
+
+            if (model.Salary != lastJob.Salary)
+            {
+                lastJob.EndDate = now;
+
+                employee.JobHistories.Add(new JobHistory()
+                {
+                    EmployeeId = employee.Id,
+                    JobId = lastJob.JobId,
+                    Salary = model.Salary,
+                    StartDate = now,
+                });
+            }
 
             return dbContext.SaveChanges() > 0;
-        }
-
-        private string FormatName(string firstName, string middleName, string lastName)
-        {
-            var middleNameLetter = middleName != null ? middleName.Substring(0, 1) : String.Empty;
-
-            return $"{ firstName ?? "" } { middleNameLetter } { lastName ?? "" }";
         }
 
         public int AddEmployee(AddEmployeeModel model)
@@ -188,7 +201,6 @@ namespace HRFlow.Services
                 LastName = model.LastName,
                 IBAN = model.IBAN,
                 HireDate = model.HireDate,
-                LineManagerId = model.LineManagerId,
                 LastModified = now,
             };
 
@@ -216,6 +228,42 @@ namespace HRFlow.Services
             dbContext.SaveChanges();
 
             return employee.Id;
+        }
+
+        private string FormatName(string firstName, string middleName, string lastName)
+        {
+            var middleNameLetter = middleName != null ? middleName.Substring(0, 1) : String.Empty;
+
+            return $"{ firstName ?? "" } { middleNameLetter } { lastName ?? "" }";
+        }
+
+        private JobHistory GetLastJob(Employee employee)
+        {
+            var lastJob = dbContext.JobHistories
+                .OrderByDescending(jh => jh.StartDate)
+                .FirstOrDefault(jh => jh.EmployeeId == employee.Id);
+
+            if (lastJob == null)
+            {
+                throw new ApplicationException($"No job found for an employee Id:{employee.Id} {employee.FirstName}");
+            }
+
+            return lastJob;
+        }
+
+        public bool UpdateComment(UpdateCommentModel model)
+        {
+            var comment = dbContext.Comments.FirstOrDefault(c => c.Id == model.Id && c.EmployeeId == c.EmployeeId);
+
+            if (comment == null)
+            {
+                return false;
+            }
+
+            comment.Content = model.Content;
+            comment.LastModified = DateTime.Now;
+
+            return dbContext.SaveChanges() > 0;
         }
     }
 }

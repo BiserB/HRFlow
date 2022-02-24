@@ -13,5 +13,8 @@ namespace HRFlow.Common.AppConstants
 
         public const int IBANMinLength = 1;
         public const int IBANMaxLength = 32;
+
+        public const int CommentMinLength = 5;
+        public const int CommentMaxLength = 250;
     }
 }

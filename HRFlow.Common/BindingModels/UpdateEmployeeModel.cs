@@ -1,10 +1,5 @@
 ﻿using HRFlow.Common.AppConstants;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HRFlow.Common.BindingModels
 {
@@ -27,11 +22,11 @@ namespace HRFlow.Common.BindingModels
         [MaxLength(Const.EmplNameMaxLength)]
         public string LastName { get; set; }
 
-        public int? LineManagerId { get; set; }
-
         [Required]
         [MinLength(Const.IBANMinLength)]
         [MaxLength(Const.IBANMaxLength)]
         public string IBAN { get; set; }
+
+        public decimal Salary { get; set; }
     }
 }

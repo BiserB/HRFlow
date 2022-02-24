@@ -1,20 +1,17 @@
 ﻿using HRFlow.Common.AppConstants;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HRFlow.Common.BindingModels
 {
-    public class AddCommentModel
+    public class UpdateCommentModel
     {
+        public int Id { get; set; }
+
         public int EmployeeId { get; set; }
 
         [Required]
         [MinLength(Const.CommentMinLength)]
         [MaxLength(Const.CommentMaxLength)]
-        public string Comment { get; set; }
+        public string Content { get; set; }
     }
 }
