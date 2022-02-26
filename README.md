@@ -24,3 +24,18 @@ Date format in PostgreSQL is 'timestamp without timezone', in SQL Server it is d
 ***
 ### Entity realtions
 ![alt text](https://github.com/BiserB/HRFlow/blob/main/HRFlow.Data/Diagrams/HRFlow.png)
+
+### Functionality
+
+The home screen shows all employees stored in the system with the corresponding line manager. You can search for an employee by name.\
+There is a start date and a comparison bar for long-term employment.\
+When you click on an employee, you are redirected to the employee details page.\
+On Employee Details page you can:
+- review full employee details: names, IBAN, current salary, line manager and hire date
+- update employee details: names, IBAN, salary
+- review and add comments, update comments
+- the "Job" section contains the history of all positions held by the employee. There is a start and end date for the job and the corresponding salary.
+- When the employee's salary is renewed, a new record is added to the work history.
+- Similarly, the "departments" section contains a history of the departments in which the employee has worked.
+
+New employees are added in the "Add Employee" page
