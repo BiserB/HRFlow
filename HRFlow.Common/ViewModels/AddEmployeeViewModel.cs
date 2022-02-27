@@ -41,6 +41,8 @@ namespace HRFlow.Common.ViewModels
 
         public decimal Salary { get; set; }
 
+        public string Address { get; set; }
+
         public List<SelectListItem> LineManagers { get; } = new List<SelectListItem>();
 
         public List<SelectListItem> Departments { get; } = new List<SelectListItem>();

@@ -27,6 +27,13 @@ namespace HRFlow.Common.BindingModels
         [MaxLength(Const.IBANMaxLength)]
         public string IBAN { get; set; }
 
+        [Required]
+        [MinLength(Const.IBANMinLength)]
+        [MaxLength(Const.IBANMaxLength)]
+        public string Address { get; set; }
+
         public decimal Salary { get; set; }
+
+        public int? LineManagerId { get; set; }
     }
 }

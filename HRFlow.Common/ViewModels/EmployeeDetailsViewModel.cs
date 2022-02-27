@@ -1,4 +1,5 @@
 ﻿using HRFlow.Common.AppConstants;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -45,11 +46,18 @@ namespace HRFlow.Common.ViewModels
         [MaxLength(Const.CommentMaxLength)]
         public string Comment { get; set; }
 
+        [Required]
+        [MinLength(Const.AddressMinLength)]
+        [MaxLength(Const.AddressMaxLength)]
+        public string Address { get; set; }
+
         public List<DepartmentHistoryViewModel> Departments { get; set; } = new List<DepartmentHistoryViewModel>();
 
         public List<JobHistoryViewModel> Jobs { get; set; } = new List<JobHistoryViewModel>();
 
         public List<CommentViewModel> Comments { get; set; } = new List<CommentViewModel>();
+
+        public List<SelectListItem> LineManagers { get; } = new List<SelectListItem>();
 
         public decimal[] PaymentHistory { get; set; } = new decimal[0];
 

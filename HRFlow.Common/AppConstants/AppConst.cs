@@ -16,5 +16,8 @@ namespace HRFlow.Common.AppConstants
 
         public const int CommentMinLength = 5;
         public const int CommentMaxLength = 250;
+
+        public const int AddressMinLength = 5;
+        public const int AddressMaxLength = 250;
     }
 }

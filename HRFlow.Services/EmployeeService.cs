@@ -2,6 +2,7 @@
 using HRFlow.Common.ViewModels;
 using HRFlow.Data;
 using HRFlow.Entities;
+using HRFlow.Entities.Enums;
 using HRFlow.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -38,10 +39,14 @@ namespace HRFlow.Services
 
             IList<EmployeeViewModel> employeeModels;
 
+            IQueryable<Employee> employees = dbContext.Employees;
+
             if (onlyActiveEmployees)
             {
-                employeeModels = dbContext.Employees
-                    .Where(e => e.TerminationDate == null)
+                employees = employees.Where(e => e.TerminationDate == null);
+            }
+
+            employeeModels = employees
                     .Select(e => new EmployeeViewModel()
                     {
                         Id = e.Id,
@@ -52,23 +57,8 @@ namespace HRFlow.Services
                         HireDate = e.HireDate.ToShortDateString(),
                         LongTermEmployee = (today.Date - e.HireDate.Date).Days.ToString()
                     })
+                    .OrderBy(e => e.Id)
                     .ToList();
-            }
-            else
-            {
-                employeeModels = dbContext.Employees
-                    .Select(e => new EmployeeViewModel()
-                    {
-                        Id = e.Id,
-                        FirstName = e.FirstName,
-                        MiddleName = e.MiddleName,
-                        LastName = e.LastName,
-                        LineManagerName = e.LineManager != null ? e.LineManager.LastName : String.Empty,
-                        HireDate = e.HireDate.ToShortDateString(),
-                        LongTermEmployee = (today.Date - e.HireDate.Date).Days.ToString()
-                    })
-                    .ToList();
-            }
 
             return employeeModels;
         }
@@ -77,6 +67,7 @@ namespace HRFlow.Services
         {
             var employee = dbContext.Employees
                 .Include(e => e.LineManager)
+                .Include(e => e.Contact)
                 .FirstOrDefault(e => e.Id == id);
 
             if (employee == null)
@@ -128,13 +119,6 @@ namespace HRFlow.Services
                 })
                 .ToList();
 
-            var lineManagerName = String.Empty;
-
-            if (employee.LineManager != null)
-            {
-                lineManagerName = FormatName(employee.LineManager.FirstName, employee.LineManager.MiddleName, employee.LineManager.LastName);
-            }
-
             var lastJob = GetLastJob(employee);
 
             var model = new EmployeeDetailsViewModel()
@@ -145,58 +129,70 @@ namespace HRFlow.Services
                 LastName = employee.LastName,
                 HireDate = employee.HireDate.ToShortDateString(),
                 IBAN = employee.IBAN,
-                LineManagerId = employee.LineManagerId,
-                LineManagerName = lineManagerName,
                 Departments = departmentHistory,
                 Jobs = jobHistory,
                 Comments = comments,
                 Salary = lastJob.Salary,
             };
 
+            model.LineManagers.AddRange(GetManagerSelectList(employee.LineManager));
+
+            model.Address = employee.Contact.Address;
+
             return model;
         }
 
         public bool UpdateEmployee(UpdateEmployeeModel model)
         {
-            var employee = dbContext.Employees.FirstOrDefault(e => e.Id == model.Id);
-
-            if (employee == null)
+            try
             {
-                return false;
-            }
+                var employee = dbContext.Employees.Include(e => e.Contact).FirstOrDefault(e => e.Id == model.Id);
 
-            var now = DateTime.Now;
-
-            employee.FirstName = model.FirstName;
-            employee.MiddleName = model.MiddleName;
-            employee.LastName = model.LastName;
-            employee.IBAN = model.IBAN;
-            employee.LastModified = now;
-
-            var lastJob = GetLastJob(employee);
-
-            if (model.Salary != lastJob.Salary)
-            {
-                lastJob.EndDate = now;
-
-                employee.JobHistories.Add(new JobHistory()
+                if (employee == null)
                 {
-                    EmployeeId = employee.Id,
-                    JobId = lastJob.JobId,
-                    Salary = model.Salary,
-                    StartDate = now,
-                });
-            }
+                    return false;
+                }
 
-            return dbContext.SaveChanges() > 0;
+                var now = DateTime.Now;
+
+                employee.FirstName = model.FirstName;
+                employee.MiddleName = model.MiddleName;
+                employee.LastName = model.LastName;
+                employee.IBAN = model.IBAN;
+                employee.LastModified = now;
+                employee.Contact.Address = model.Address;
+
+                var lineManagerExists = dbContext.Employees.Any(e => e.Id == model.LineManagerId);
+
+                employee.LineManagerId = lineManagerExists ? model.LineManagerId : null;                               
+
+                var lastJob = GetLastJob(employee);
+
+                if (model.Salary != lastJob.Salary)
+                {
+                    lastJob.EndDate = now;
+
+                    employee.JobHistories.Add(new JobHistory()
+                    {
+                        EmployeeId = employee.Id,
+                        JobId = lastJob.JobId,
+                        Salary = model.Salary,
+                        StartDate = now,
+                    });
+                }
+
+                return dbContext.SaveChanges() > 0;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
 
         public AddEmployeeViewModel GetEmployeeModel()
         {
-            var managers = dbContext.Employees
-                .Where(e => e.LineManagerId == null)
-                .Select(e => new SelectListItem() { Value = e.Id.ToString(), Text = e.FirstName + " " + e.LastName})
-                .ToList();
+            var managers = GetManagerSelectList();
 
             var departments = dbContext.Departments
                 .Select(d => new SelectListItem() { Value = d.Id.ToString(), Text = d.Name })
@@ -208,7 +204,7 @@ namespace HRFlow.Services
 
             var model = new AddEmployeeViewModel() { HireDate = DateTime.Now };
 
-            model.LineManagers.Add(new SelectListItem() { Value = "0", Text = " - - - " });
+            
             model.Departments.Add(new SelectListItem() { Value = "0", Text = " - - - " });
             model.Jobs.Add(new SelectListItem() { Value = "0", Text = " - - - " });
 
@@ -231,6 +227,7 @@ namespace HRFlow.Services
                 IBAN = model.IBAN,
                 HireDate = model.HireDate,
                 LastModified = now,
+                LineManagerId = model.LineManagerId
             };
 
             dbContext.Employees.Add(employee);
@@ -252,6 +249,19 @@ namespace HRFlow.Services
                 Salary = model.Salary,
             };
 
+            var random = new Random();
+
+            var contact = new Contact()
+            {
+                Address = model.Address,
+                Employee = employee,
+                PersonalEmail = employee.FirstName.ToLower() + "private.com",
+                CompanyEmail = employee.FirstName.ToLower() + "enterprise.com",
+                PhoneNumber = random.Next(50000000, 90000000).ToString(),
+                Gender = Gender.Male,
+            };
+
+            dbContext.Contacts.Add(contact);
             dbContext.DepartmentHistories.Add(departmentHistory);
             dbContext.JobHistories.Add(jobHistory);
             dbContext.SaveChanges();
@@ -293,6 +303,22 @@ namespace HRFlow.Services
             comment.LastModified = DateTime.Now;
 
             return dbContext.SaveChanges() > 0;
+        }
+
+        private List<SelectListItem> GetManagerSelectList(Employee lineManager = null)
+        {
+            var managerId = lineManager != null ? lineManager.Id : -1;
+
+            var lineManagers = new List<SelectListItem>();
+            
+            lineManagers.Add(new SelectListItem() { Value = "0", Text = " - - - " });
+
+            lineManagers.AddRange(dbContext.Employees
+                .Where(e => e.Subordinates.Count > 0)
+                .Select(e => new SelectListItem() { Value = e.Id.ToString(), Text = e.FirstName + " " + e.LastName, Selected = e.Id == managerId })
+                .ToList());
+
+            return lineManagers;
         }
     }
 }
