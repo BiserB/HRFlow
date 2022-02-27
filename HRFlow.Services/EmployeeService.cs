@@ -198,11 +198,23 @@ namespace HRFlow.Services
                 .Select(e => new SelectListItem() { Value = e.Id.ToString(), Text = e.FirstName + " " + e.LastName})
                 .ToList();
 
+            var departments = dbContext.Departments
+                .Select(d => new SelectListItem() { Value = d.Id.ToString(), Text = d.Name })
+                .ToList();
+
+            var jobs = dbContext.Jobs
+                .Select(d => new SelectListItem() { Value = d.Id.ToString(), Text = d.Title })
+                .ToList();
+
             var model = new AddEmployeeViewModel() { HireDate = DateTime.Now };
 
             model.LineManagers.Add(new SelectListItem() { Value = "0", Text = " - - - " });
+            model.Departments.Add(new SelectListItem() { Value = "0", Text = " - - - " });
+            model.Jobs.Add(new SelectListItem() { Value = "0", Text = " - - - " });
 
             model.LineManagers.AddRange(managers);
+            model.Departments.AddRange(departments);
+            model.Jobs.AddRange(jobs);
 
             return model;
         }
