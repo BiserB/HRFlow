@@ -22,7 +22,7 @@ Date format in PostgreSQL is 'timestamp without timezone', in SQL Server it is d
 - The department can be changed, the respective department history is maintained.
 
 ***
-### Entity realtions
+### Entity relations
 ![alt text](https://github.com/BiserB/HRFlow/blob/main/HRFlow.Data/Diagrams/HRFlow.png)
 
 ### Functionality
