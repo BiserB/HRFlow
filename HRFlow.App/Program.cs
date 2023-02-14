@@ -20,13 +20,13 @@ namespace HRFlow.App
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+            //AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
             builder.Services.AddDbContext<HRFlowDbContext>(b =>
             {
                 // Select needed DB
-                b.UseNpgsql(builder.Configuration.GetConnectionString("HRFlowDb"));
-                //b.UseSqlServer(builder.Configuration.GetConnectionString("HRFlowDb_SQLServer"));
+                //b.UseNpgsql(builder.Configuration.GetConnectionString("HRFlowDb_PostgreSQL"));
+                b.UseSqlServer(builder.Configuration.GetConnectionString("HRFlowDb_SQLServer"));
             });
 
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
